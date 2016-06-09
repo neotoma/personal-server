@@ -1,0 +1,19 @@
+{
+  "name": "markmhendrickson-server",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markmhx/markmhendrickson-server.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/markmhx/markmhendrickson-server/issues"
+  },
+  "dependencies": {
+    "express": "^4.13.4",
+    "fs": "0.0.2"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1"
+  }
+}
