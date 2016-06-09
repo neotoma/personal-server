@@ -1,13 +1,13 @@
 {
-  "name": "markmhendrickson-server",
+  "name": "server",
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/markmhx/markmhendrickson-server.git"
+    "url": "git+https://github.com/markmhx/server.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/markmhx/markmhendrickson-server/issues"
+    "url": "https://github.com/markmhx/server/issues"
   },
   "dependencies": {
     "express": "^4.13.4",
