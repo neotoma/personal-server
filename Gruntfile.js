@@ -1,22 +1,29 @@
 module.exports = function(grunt) {
   'use strict';
 
-  grunt.loadNpmTasks('grunt-express');
+  require('load-grunt-tasks')(grunt);
 
   grunt.initConfig({
     express: {
-      main: {
+      dev: {
         options: {
-          hostname: 'localhost',
-          port: 4202,
-          server: 'app.js'
+          script: './app.js'
+        }
+      }
+    },
+    watch: {
+      express: {
+        files: ['**/*.js'],
+        tasks: ['express:dev'],
+        options: {
+          spawn: false
         }
       }
     }
   });
 
-  grunt.registerTask('serve', [
-    'express',
-    'express-keepalive'
+  grunt.registerTask('default', [
+    'express:dev',
+    'watch'
   ]);
 };
