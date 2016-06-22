@@ -10,10 +10,12 @@
     "url": "https://github.com/markmhx/server/issues"
   },
   "dependencies": {
+    "async": "^2.0.0-rc.6",
     "fs": "0.0.2",
     "grunt-contrib-watch": "^1.0.0",
     "path": "^0.12.7",
-    "pluralize": "^2.0.0"
+    "pluralize": "^2.0.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "grunt": "^1.0.1",
