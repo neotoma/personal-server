@@ -23,7 +23,12 @@ var sendData = function(req, res, data) {
     } else {
       json = JSON.parse(data);
     }
+  } catch(error) {
+    console.error('Unable to parse data', error);
+    return res.status(500).send('Internal Server Error');
+  }
 
+  try {
     res.setHeader('Content-Type', 'application/json');
 
     if (Array.isArray(json)) {
@@ -37,8 +42,8 @@ var sendData = function(req, res, data) {
 
     res.send({ "data": json });
   } catch(error) {
-    res.status(500).send('Internal Server Error');
     console.error('Unable to send data', error);
+    return res.status(500).send('Internal Server Error');
   }
 };
 
@@ -49,7 +54,6 @@ var getResource = function(req, res) {
 
   if (!req.params.id) {
     var dir = __dirname + '/data/' + parts[1];
-    console.log('GET', parts[1]);
 
     fs.readdir(dir, function(error, files) {
       if (error || !files.length) {
@@ -62,7 +66,13 @@ var getResource = function(req, res) {
           sendData(req, res, data);
         });
       } else {
-        var files = files.map(function(file) { return path.join(dir, file); });
+        var files = files.map(function(file) { 
+          return path.join(dir, file); 
+        }).filter(function(file) {
+          if (file.indexOf('.json') !== -1) { 
+            return file; 
+          } 
+        });
 
         async.map(files, fs.readFile, function(error, data) {
           sendData(req, res, data);
