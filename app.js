@@ -70,12 +70,12 @@ var sendData = function(req, res, data) {
     res.setHeader('Content-Type', 'application/json');
 
     if (Array.isArray(json)) {
+      json = _.sortBy(json, 'id');
+      json.reverse();
+
       if (req.query.limit) {
         json = json.slice(0, req.query.limit);
       }
-
-      json = _.sortBy(json, 'id');
-      json.reverse();
     }
 
     res.send({ "data": json });
