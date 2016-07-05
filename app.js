@@ -73,9 +73,25 @@ var sendData = function(req, res, data) {
       json = _.sortBy(json, 'id');
       json.reverse();
 
+      if (req.query.filter) {
+        console.log("req.query.filter", req.query.filter);
+        json = json.filter(function(el, i) {
+          for (var key in req.query.filter) {
+            if (el.attributes[key] !== req.query.filter[key]) {
+              return false;
+            }
+          }
+          return true;
+        });
+      }
+
       if (req.query.limit) {
         json = json.slice(0, req.query.limit);
       }
+    }
+
+    if (!json || (Array.isArray(json) && json.length === 0)) {
+      return res.status(404).send('Not Found');
     }
 
     res.send({ "data": json });
