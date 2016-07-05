@@ -74,7 +74,6 @@ var sendData = function(req, res, data) {
       json.reverse();
 
       if (req.query.filter) {
-        console.log("req.query.filter", req.query.filter);
         json = json.filter(function(el, i) {
           for (var key in req.query.filter) {
             if (el.attributes[key] !== req.query.filter[key]) {
