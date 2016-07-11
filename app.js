@@ -6,7 +6,7 @@ var async = require('async');
 var _ = require('underscore');
 var app = express();
 
-app.use('/images', express.static('data/images'));
+app.use('/assets/images', express.static('data/assets/images'));
 
 var server = app.listen(process.env.PORT);
 
@@ -39,6 +39,7 @@ var convertItemUrlsToAbsolute = function(item, req) {
   item.attributes = _.mapObject(item.attributes, function(val, key) {
     return (isRelativeUrlProperty(key, val) || isRelativeUrlItemValue(item, key, val)) ? 'http://' + path.join(req.hostname + ':' + process.env.PORT, val) : val;
   });
+
   return item;
 }
 
@@ -150,7 +151,7 @@ fs.readdir(path.join(__dirname, 'data'), function(error, files) {
     fs.stat(path.join(__dirname, 'data', filename), function(error, stats) {
       if (error) {
         dumpError('Unable to stat file', filename, 'for directory status');
-      } else if (stats.isDirectory() && filename !== 'images') {
+      } else if (stats.isDirectory() && filename !== 'assets') {
         app.get('/' + pluralize(filename) + '/:id?', getResource);
       }
     });
