@@ -71,7 +71,16 @@ var sendData = function(req, res, data) {
     res.setHeader('Content-Type', 'application/json');
 
     if (Array.isArray(json)) {
-      json = _.sortBy(json, 'id');
+      json = _.sortBy(json, function(item) {
+        if (typeof item['published-at'] !== 'undefined') {
+          return Number(item['published-at']);
+        } else if (!isNaN(item['id'])) {
+          return parseFloat(item['id']);
+        } else {
+          return item['id'];
+        }
+      });
+
       json.reverse();
 
       if (req.query.filter) {
