@@ -99,7 +99,7 @@ var sendData = function(req, res, data) {
       }
     }
 
-    if (!json || (Array.isArray(json) && json.length === 0)) {
+    if (!json) {
       return res.status(404).send('Not Found');
     }
 
@@ -107,6 +107,20 @@ var sendData = function(req, res, data) {
   } catch(error) {
     dumpError('Unable to send data', error);
     return res.status(500).send('Internal Server Error');
+  }
+};
+
+var getThrottledResource = function(req, res) {
+  var parts = req.path.split('/');
+
+  if (false && parts[1] === 'companies') {
+    res.status(500).send('Internal Server Error');
+  } else if (true || parts[1] === 'posts') {
+    setTimeout(function() {
+      getResource(req, res);
+    }, 2000);
+  } else {
+    getResource(req, res);
   }
 };
 
