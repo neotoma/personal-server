@@ -146,7 +146,7 @@ var getResource = function(req, res) {
         var files = files.map(function(file) { 
           return path.join(dir, file); 
         }).filter(function(file) {
-          if (file.indexOf('.json') !== -1) { 
+          if (file.indexOf('.json') !== -1 && file.indexOf('.backup') === -1) { 
             return file; 
           } 
         });
