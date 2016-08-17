@@ -5,10 +5,11 @@ var pluralize = require('pluralize');
 var async = require('async');
 var _ = require('underscore');
 var app = express();
+var port = process.env.SERVER_PORT;
 
 app.use('/assets/images', express.static('data/assets/images'));
 
-var server = app.listen(process.env.PORT);
+var server = app.listen(port);
 
 function dumpError(message, err) {
   console.error(message);
@@ -37,7 +38,9 @@ var convertItemUrlsToAbsolute = function(item, req) {
   };
 
   item.attributes = _.mapObject(item.attributes, function(val, key) {
-    return (isRelativeUrlProperty(key, val) || isRelativeUrlItemValue(item, key, val)) ? 'http://' + path.join(req.hostname + ':' + process.env.PORT, val) : val;
+    var asset_port = process.env.SERVER_PROXY_PORT ? process.env.SERVER_PROXY_PORT : port;
+
+    return (isRelativeUrlProperty(key, val) || isRelativeUrlItemValue(item, key, val)) ? 'http://' + path.join(req.hostname + ':' + asset_port, val) : val;
   });
 
   return item;
@@ -183,4 +186,4 @@ fs.readdir(path.join(__dirname, 'data'), function(error, files) {
 
 module.exports = app;
 
-console.log('Express server listening on port', process.env.PORT);
+console.log('Express server listening on port', port);

@@ -5,7 +5,7 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     express: {
-      dev: {
+      main: {
         options: {
           script: './app.js'
         }
@@ -14,16 +14,53 @@ module.exports = function(grunt) {
     watch: {
       express: {
         files: ['**/*.js'],
-        tasks: ['express:dev'],
+        tasks: ['express:main'],
         options: {
           spawn: false
+        }
+      }
+    },
+    rsync: {
+      options: {
+        host: process.env.SERVER_DEPLOY_HOST_USERNAME + '@' + process.env.SERVER_DEPLOY_HOST,
+        recursive: true
+      },
+      app: {
+        options: {
+          exclude: [
+            ".DS_Store",
+            ".git*",
+            "data",
+            "node_modules",
+            "*.sublime*"
+          ],
+          src: './',
+          dest: process.env.SERVER_DEPLOY_HOST_DIR
+        }
+      },
+      data: {
+        options: {
+          src: '"' + process.env.SERVER_DATA_DIR + '"',
+          dest: '"' + process.env.SERVER_DEPLOY_HOST_DIR + '"'
         }
       }
     }
   });
 
-  grunt.registerTask('default', [
-    'express:dev',
+  grunt.registerTask('dev', [
+    'express:main',
     'watch'
+  ]);
+
+  grunt.registerTask('deploy-app', [
+    'rsync:app'
+  ]);
+
+  grunt.registerTask('deploy-data', [
+    'rsync:data'
+  ]);
+
+  grunt.registerTask('serve', [
+    'express:main'
   ]);
 };
