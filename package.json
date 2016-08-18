@@ -10,17 +10,18 @@
     "url": "https://github.com/markmhx/server/issues"
   },
   "dependencies": {
-    "grunt": "^1.0.1",
-    "grunt-express-server": "^0.5.3",
-    "load-grunt-tasks": "^3.5.0",
     "async": "^2.0.0-rc.6",
     "fs": "0.0.2",
-    "grunt-contrib-watch": "^1.0.0",
     "path": "^0.12.7",
     "pluralize": "^2.0.0",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "grunt-rsync": "^1.0.1"
+    "grunt": "^1.0.1",
+    "grunt-rsync": "^1.0.1",
+    "grunt-ssh": "^0.12.9",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-express-server": "^0.5.3",
+    "load-grunt-tasks": "^3.5.0"
   }
 }

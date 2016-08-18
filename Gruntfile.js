@@ -44,6 +44,23 @@ module.exports = function(grunt) {
           dest: '"' + process.env.SERVER_DEPLOY_HOST_DIR + '"'
         }
       }
+    },
+    sshexec: {
+      options: {
+        host: process.env.SERVER_DEPLOY_HOST,
+        port: 22,
+        username: process.env.SERVER_DEPLOY_HOST_USERNAME,
+        agent: process.env.SSH_AUTH_SOCK
+      },
+      npmInstall: {
+        command: 'cd ' + process.env.SERVER_DEPLOY_HOST_DIR + ' && npm install --production'
+      },
+      foreverRestartAll: {
+        command: 'cd ' + process.env.SERVER_DEPLOY_HOST_DIR + ' && forever restartall'
+      },
+      deleteData: {
+        command: 'cd ' + process.env.SERVER_DEPLOY_HOST_DIR + ' && rm -Rf data'
+      }
     }
   });
 
@@ -52,15 +69,15 @@ module.exports = function(grunt) {
     'watch'
   ]);
 
-  grunt.registerTask('deploy-app', [
-    'rsync:app'
+  grunt.registerTask('deploy', [
+    'rsync:app',
+    'sshexec:npmInstall',
+    'sshexec:foreverRestartAll'
   ]);
 
   grunt.registerTask('deploy-data', [
-    'rsync:data'
-  ]);
-
-  grunt.registerTask('serve', [
-    'express:main'
+    'sshexec:deleteData',
+    'rsync:data',
+    'sshexec:foreverRestartAll'
   ]);
 };
