@@ -7,7 +7,7 @@ var _ = require('underscore');
 var app = express();
 var port = process.env.SERVER_PORT;
 
-app.use('/assets/images', express.static('data/assets/images'));
+app.use('/assets', express.static('data/assets'));
 
 var server = app.listen(port);
 
@@ -38,9 +38,7 @@ var convertItemUrlsToAbsolute = function(item, req) {
   };
 
   item.attributes = _.mapObject(item.attributes, function(val, key) {
-    var asset_port = process.env.SERVER_PROXY_PORT ? process.env.SERVER_PROXY_PORT : port;
-
-    return (isRelativeUrlProperty(key, val) || isRelativeUrlItemValue(item, key, val)) ? 'http://' + path.join(req.hostname + ':' + asset_port, val) : val;
+    return (isRelativeUrlProperty(key, val) || isRelativeUrlItemValue(item, key, val)) ? 'http://' + path.join(req.headers.host, val) : val;
   });
 
   return item;
