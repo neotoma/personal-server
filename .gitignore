@@ -1,3 +1,4 @@
+*.env
 *.sublime-workspace
 data
 node_modules
