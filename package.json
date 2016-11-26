@@ -1,23 +1,24 @@
 {
-  "name": "server",
+  "name": "personal-server",
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/markmhx/server.git"
+    "url": "git+https://github.com/asheville/personal-server.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/markmhx/server/issues"
+    "url": "https://github.com/asheville/personal-server/issues"
   },
   "dependencies": {
     "async": "^2.0.0-rc.6",
+    "dotenv": "^2.0.0",
     "fs": "0.0.2",
     "path": "^0.12.7",
     "pluralize": "^2.0.0",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "grunt": "^1.0.1",
+    "grunt": "~0.4.0",
     "grunt-rsync": "^1.0.1",
     "grunt-ssh": "^0.12.9",
     "grunt-contrib-watch": "^1.0.0",
