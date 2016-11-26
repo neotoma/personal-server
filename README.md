@@ -113,7 +113,7 @@ As mentioned above, all files stored within `data/assets` can be queried with th
 
 ## Developing and deploying the server
 
-With [Grunt](gruntjs.com) installed, you can run any of the following scripts to help with development and deployment:
+With [Grunt](gruntjs.com) installed in addition to establishing your environment and data accordingly per the instructions above, you can run any of the following scripts to help with development and deployment:
 
 - `grunt dev`: Runs the server and automatically reloads it when code changes are made during development
 - `grunt deploy-data`: Deploys the data directory remotely. Running this script is highly recommended before deploying and running the server itself remotely.
