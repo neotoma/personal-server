@@ -8,13 +8,13 @@ This server is initially intended to support [a personal web app](https://github
 
 ## Setting up the data
 
-A directory with the individual's personal data must be made available at `data` either directly or as a symbolic link to a directory located elsewhere in the system.
+A directory with the individual's personal data must be made available at a path indicated by the environment (see next section for how to indicate path). This directory can be placed at `data` within the base directory and it will be ignored by Git. 
 
 Files within this directory should be organized into subdirectories named by type, all lower-case and with dashes used to indicate spaces. E.g. "posts" should be placed within a `posts` subdirectory and "athletic results" within the `athletic-results` subdirectory.
 
 Within each directory, objects should be represented as JSON files that conform to the JSON API format and are named by their ID plus the ".json" extension. E.g. a post object within the `posts` directory could be located at `posts/15.json`.
 
-If an object relates to another, it should use the relationship syntax dictated by the JSON API specification to do so. If it relates to a non-object resource, it should do so with an attribute containing a URL for that resource. Relative URLs can be used for resources served locally from within the `data/assets` directory.
+If an object relates to another, it should use the relationship syntax dictated by the JSON API specification to do so. If it relates to a non-object resource, it should do so with an attribute containing a URL for that resource. Relative URLs can be used for resources served locally from within the `assets` subdirectory of the data directory.
 
 Here is an example to illustrate how a poem object could be represented by a JSON file:
 
@@ -42,9 +42,9 @@ Here is an example to illustrate how a poem object could be represented by a JSO
 }
 ```
 
-Note how the `image-url` attribute refers to a static asset hosted by the server at `/assets/data-haiku.png` and backed by a file stored at `data/assets/data-haiku.png` within the data directory. Note also how the object is related to another "poetry collection" object using a proper ID-based declaration at the bottom. This declaration implies that a file representing that poetry collection has been placed at `data/poetry-collections/8.json`.
+Note how the `image-url` attribute refers to a static asset hosted by the server at `/assets/data-haiku.png` and backed by a file stored at `assets/data-haiku.png` within the data directory. Note also how the object is related to another "poetry collection" object using a proper ID-based declaration at the bottom. This declaration implies that a file representing that poetry collection has been placed at `poetry-collections/8.json`  within the data directory.
 
-Objects can also be stored as sets within "index.json" files for each type in addition or instead of as individual files for separate objects. E.g. the following array of JSON objects could be stored at "data/skills/index.js` to maintain all skill objects in one file:
+Objects can also be stored as sets within "index.json" files for each type in addition or instead of as individual files for separate objects. E.g. the following array of JSON objects could be stored at "skills/index.js` within the data directory to maintain all skill objects in one file:
 
 ```
 [{
@@ -75,25 +75,28 @@ Note that the server will have to be restarted to recognize the addition or subt
 
 ## Setting up the environment
 
-The code requires one environment variable to run the server and several others to deploy the server to another system. These environment variables can be declared by adding a file named `.env` (in [INI format](https://en.wikipedia.org/wiki/INI_file)) to the base directory, assuming they're not already declared elsewhere in the system already:
+The code requires one environment variable to run the server and several others to deploy the server to another system. The following environment variables can be declared by adding a file named `.env` (in [INI format](https://en.wikipedia.org/wiki/INI_file)) to the base directory, assuming they're not already declared elsewhere in the system already. Such a file will be ignored by Git.
 
 - `PERSONAL_SERVER_PORT`: Port through which to run the server locally (required for running the app but not required for deployment)
-- `PERSONAL_SERVER_DEPLOY_HOST`: Address of the remote deployment server (required for deployment)
-- `PERSONAL_SERVER_DEPLOY_DIR`: Destination directory for app on remote deployment server (required for deployment)
+- `PERSONAL_SERVER_DATA_DIR`: Local system path to data directory (required for running the app but not required for deployment)
 - `PERSONAL_SERVER_DEPLOY_USERNAME`: User name with which to SSH into remote deployment server (required for deployment)
-- `PERSONAL_SERVER_DATA_DIR`: System path to local data directory (required for data deployment and not assumed to be `./data` since it could be symlinked from elsewhere)
+- `PERSONAL_SERVER_DEPLOY_HOST`: Address of the remote deployment server (required for deployment)
+- `PERSONAL_SERVER_DEPLOY_DIR`: Remote system path to app directory on deployment server (required for deployment)
+- `PERSONAL_SERVER_DEPLOY_DATA_DIR`: Remote system path to data directory on deployment server (required for deployment)
 
 You can execute the following from the base directory to create such a file with a default value to run the server on port 4201:
 
 ```
-echo "PERSONAL_SERVER_PORT=4201" > .env
+printf "PERSONAL_SERVER_PORT=4201\nPERSONAL_SERVER_DATA_DIR=data" > .env
 ```
 
-If you intend to deploy the server to another system using the script below, you also need to create a `deploy.env` file in the base directory, one that declares the port through which you'd like to run the server remotely. The following can be executed from the base directory to create such a file:
+If you intend to deploy the server to another system using the script below, you must also create a `.env-deploy` file in the base directory, one that will be ignored by Git and used upon deployment to create an `.env` file remotely, thereby setting environment variables on the deployment server. The following can be executed from the base directory to create such a file:
 
 ```
-echo "PERSONAL_SERVER_PORT=4201" > deploy.env
+printf "PERSONAL_SERVER_PORT=4201\nPERSONAL_SERVER_DATA_DIR=data" > .env-deploy
 ```
+
+Note that the value of `PERSONAL_SERVER_DEPLOY_DATA_DIR` locally should match the value of `PERSONAL_SERVER_DATA_DIR` remotely to deploy data into the remote directory that the app actually uses there.
 
 ## Running the server
 

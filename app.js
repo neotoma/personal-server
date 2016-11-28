@@ -8,7 +8,7 @@ var _ = require('underscore');
 var app = express();
 var port = process.env.PERSONAL_SERVER_PORT;
 
-app.use('/assets', express.static('data/assets'));
+app.use('/assets', express.static(process.env.PERSONAL_SERVER_DATA_DIR + '/assets'));
 
 var server = app.listen(port);
 
@@ -118,7 +118,7 @@ var getResource = function(req, res) {
   var parts = req.path.split('/');
 
   if (!req.params.id) {
-    var dir = __dirname + '/data/' + parts[1];
+    var dir = process.env.PERSONAL_SERVER_DATA_DIR + '/' + parts[1];
 
     fs.readdir(dir, function(error, files) {
       if (error || !files.length) {
@@ -145,7 +145,7 @@ var getResource = function(req, res) {
       }
     });
   } else {
-    var filename = __dirname + '/data/' + parts[1] + '/' + req.params.id + '.json';
+    var filename = process.env.PERSONAL_SERVER_DATA_DIR + '/' + parts[1] + '/' + req.params.id + '.json';
 
     fs.readFile(filename, function(error, data) {
       sendData(req, res, data);
@@ -153,13 +153,13 @@ var getResource = function(req, res) {
   }
 };
 
-fs.readdir(path.join(__dirname, 'data'), function(error, files) {
+fs.readdir(process.env.PERSONAL_SERVER_DATA_DIR, function(error, files) {
   if (error) {
     return dumpError('Unable to read data directory for types', error);
   }
 
   files.forEach(function(filename) {
-    fs.stat(path.join(__dirname, 'data', filename), function(error, stats) {
+    fs.stat(path.join(process.env.PERSONAL_SERVER_DATA_DIR, filename), function(error, stats) {
       if (error) {
         dumpError('Unable to stat file', filename, 'for directory status');
       } else if (stats.isDirectory() && filename !== 'assets') {

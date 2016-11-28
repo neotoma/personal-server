@@ -27,30 +27,33 @@ module.exports = function(grunt) {
         host: process.env.PERSONAL_SERVER_DEPLOY_USERNAME + '@' + process.env.PERSONAL_SERVER_DEPLOY_HOST,
         recursive: true
       },
-      appEnv: {
+      env: {
         options: {
-          src: 'deploy.env',
+          args: ['--rsync-path="mkdir -p ' + process.env.PERSONAL_SERVER_DEPLOY_DIR + ' && rsync"'],
+          src: '.env-deploy',
           dest: process.env.PERSONAL_SERVER_DEPLOY_DIR + '/.env',
         }
       },
       app: {
         options: {
           exclude: [
-            "*.env",
+            ".env*",
             ".DS_Store",
             ".git*",
             "data",
             "node_modules",
             "*.sublime*"
           ],
+          args: ['--rsync-path="mkdir -p ' + process.env.PERSONAL_SERVER_DEPLOY_DIR + ' && rsync"'],
           src: './',
           dest: process.env.PERSONAL_SERVER_DEPLOY_DIR
         }
       },
       data: {
         options: {
-          src: '"' + process.env.PERSONAL_SERVER_DATA_DIR + '"',
-          dest: '"' + process.env.PERSONAL_SERVER_DEPLOY_DIR + '"'
+          args: ['--rsync-path="mkdir -p ' + process.env.PERSONAL_SERVER_DEPLOY_DATA_DIR + ' && rsync"'],
+          src: '"' + process.env.PERSONAL_SERVER_DATA_DIR + '/"',
+          dest: '"' + process.env.PERSONAL_SERVER_DEPLOY_DATA_DIR + '"'
         }
       }
     },
@@ -68,7 +71,7 @@ module.exports = function(grunt) {
         command: 'cd ' + process.env.PERSONAL_SERVER_DEPLOY_DIR + ' && forever restart app.js || forever start app.js'
       },
       deleteData: {
-        command: 'cd ' + process.env.PERSONAL_SERVER_DEPLOY_DIR + ' && rm -Rf data'
+        command: 'rm -rf ' + process.env.PERSONAL_SERVER_DEPLOY_DATA_DIR
       }
     }
   });
@@ -79,8 +82,8 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('deploy', [
-    'rsync:appEnv',
     'rsync:app',
+    'rsync:env',
     'sshexec:npmInstall',
     'sshexec:foreverRestartAll'
   ]);
