@@ -82,8 +82,16 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('deploy', [
+    'deploy-dependencies',
+    'deploy-app'
+  ]);
+
+  grunt.registerTask('deploy-dependencies', [
     'rsync:app',
-    'rsync:env',
+    'rsync:env'
+  ]);
+
+  grunt.registerTask('deploy-app', [
     'sshexec:npmInstall',
     'sshexec:foreverRestartAll'
   ]);
