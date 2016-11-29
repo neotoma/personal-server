@@ -114,7 +114,7 @@ Note that if objects are stored as individual files, they can be queried either 
 
 As mentioned above, all files stored within `data/assets` can be queried with the `assets` path segment. E.g. a file stored at `data/assets/movies/hunting-summer-2012.avi` could be queried at `/assets/movies/hunting-summer-2012.avi`. Note how the "data" directory is not referenced by the URL path.
 
-## Developing and deploying the server
+## Developing and deploying
 
 With [Grunt](gruntjs.com) installed in addition to establishing your environment and data accordingly per the instructions above, you can run any of the following scripts to help with development and deployment:
 
