@@ -171,4 +171,4 @@ fs.readdir(process.env.PERSONAL_SERVER_DATA_DIR, function(error, files) {
 
 module.exports = app;
 
-console.log('Express server listening on port', port);
+console.log('Express server listening for HTTP requests on port', port);
