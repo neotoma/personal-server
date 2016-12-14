@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('./lib/env');
 
 module.exports = function(grunt) {
   'use strict';
@@ -51,9 +51,9 @@ module.exports = function(grunt) {
       },
       data: {
         options: {
-          args: ['--rsync-path="mkdir -p ' + process.env.PERSONAL_SERVER_DEPLOY_DATA_DIR + ' && rsync"'],
-          src: '"' + process.env.PERSONAL_SERVER_DATA_DIR + '/"',
-          dest: '"' + process.env.PERSONAL_SERVER_DEPLOY_DATA_DIR + '"'
+          args: ['-v --rsync-path="mkdir -p ' + process.env.PERSONAL_SERVER_DEPLOY_DATA_DIR + ' && rsync"'],
+          src: process.env.PERSONAL_SERVER_DATA_DIR + '/',
+          dest: process.env.PERSONAL_SERVER_DEPLOY_DATA_DIR
         }
       }
     },
@@ -67,38 +67,47 @@ module.exports = function(grunt) {
       npmInstall: {
         command: 'cd ' + process.env.PERSONAL_SERVER_DEPLOY_DIR + ' && npm install --production'
       },
-      foreverRestartAll: {
-        command: 'cd ' + process.env.PERSONAL_SERVER_DEPLOY_DIR + ' && forever restart app.js || forever start app.js'
-      },
       deleteData: {
         command: 'rm -rf ' + process.env.PERSONAL_SERVER_DEPLOY_DATA_DIR
+      },
+      forever: {
+        command: 'cd ' + process.env.PERSONAL_SERVER_DEPLOY_DIR + ' && forever restart app.js || forever start app.js'
+      },
+      systemd: {
+        command: 'systemctl restart personalserver || systemctl start personalserver'
       }
     }
   });
 
-  grunt.registerTask('dev', [
+  grunt.registerTask('dev', 'Run app locally and reload upon changes', [
     'express:main',
     'watch'
   ]);
 
-  grunt.registerTask('deploy', [
+  grunt.registerTask('deploy', 'Deploy dependencies and app', [
     'deploy-dependencies',
     'deploy-app'
   ]);
 
-  grunt.registerTask('deploy-dependencies', [
-    'rsync:app',
+  grunt.registerTask('deploy-dependencies', 'Deploy dependencies', [
     'rsync:env'
   ]);
 
-  grunt.registerTask('deploy-app', [
-    'sshexec:npmInstall',
-    'sshexec:foreverRestartAll'
+  grunt.registerTask('deploy-app', 'Deploy app and install packages remotely', [
+    'rsync:app',
+    'sshexec:npmInstall'
   ]);
 
   grunt.registerTask('deploy-data', [
     'sshexec:deleteData',
-    'rsync:data',
-    'sshexec:foreverRestartAll'
+    'rsync:data'
+  ]);
+
+  grunt.registerTask('forever', 'Start or restart remotely with forever', [
+    'sshexec:forever'
+  ]);
+
+  grunt.registerTask('systemd', 'Start or restart remotely with systemd', [
+    'sshexec:systemd'
   ]);
 };
