@@ -6,6 +6,15 @@ var pluralize = require('pluralize');
 var async = require('async');
 var _ = require('underscore');
 var app = express();
+
+if (!process.env.PERSONAL_SERVER_PORT) {
+  throw new Error('App failed to find port variable from environment');
+}
+
+if (!process.env.PERSONAL_SERVER_DATA_DIR) {
+  throw new Error('App failed to find server data directory variable from environment');
+}
+
 var port = process.env.PERSONAL_SERVER_PORT;
 
 app.use('/assets', express.static(process.env.PERSONAL_SERVER_DATA_DIR + '/assets'));

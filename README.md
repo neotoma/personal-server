@@ -84,19 +84,9 @@ The code requires one environment variable to run the server and several others 
 - `PERSONAL_SERVER_DEPLOY_DIR`: Remote system path to app directory on deployment server (required to deploy app)
 - `PERSONAL_SERVER_DEPLOY_DATA_DIR`: Remote system path to data directory on deployment server (required to deploy app)
 
-You can execute the following from the base directory to create such a file with a default value to run the server on port 4201:
+The value of `PERSONAL_SERVER_DATA_DIR` can be set the absolute path of `data` within the repository and the directory will be ignored by Git.
 
-```
-printf "PERSONAL_SERVER_PORT=4201\nPERSONAL_SERVER_DATA_DIR=data" > .env
-```
-
-If you intend to deploy the server to another system using the script below, you may also create a `.env-deploy` file in the base directory, one that will be ignored by Git and used upon deployment to create an `.env` file remotely, thereby setting environment variables on the deployment server. The following can be executed from the base directory to create such a file:
-
-```
-printf "PERSONAL_SERVER_PORT=4201\nPERSONAL_SERVER_DATA_DIR=data" > .env-deploy
-```
-
-Note that the value of `PERSONAL_SERVER_DEPLOY_DATA_DIR` locally should match the value of `PERSONAL_SERVER_DATA_DIR` remotely to deploy data into the remote directory that the app actually uses there.
+The value of `PERSONAL_SERVER_DEPLOY_DATA_DIR` locally should match the value of `PERSONAL_SERVER_DATA_DIR` remotely to deploy data into the remote directory that the app actually uses there.
 
 ## Running the server
 
