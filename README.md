@@ -4,7 +4,7 @@ This repository contains the source code for a web server that acts as a persona
 
 The server consumes files stored in a data directory and makes them publically available through a RESTful API that conforms to the [JSON API specification](http://jsonapi.org/). These files are formatted primarily in JSON but can also include secondary assets with any other format.
 
-This server is initially intended to support [a personal web app](https://github.com/markmhx/web) but can serve any number of use cases that require public access to personal data made available by individuals.
+This server is initially intended to support [a personal web app](https://github.com/asheville/personal-web) but can serve any number of use cases that require public access to personal data made available by individuals.
 
 ## Setting up the data
 
