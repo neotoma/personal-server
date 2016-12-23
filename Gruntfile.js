@@ -74,7 +74,7 @@ module.exports = function(grunt) {
         command: 'cd ' + process.env.PERSONAL_SERVER_DEPLOY_DIR + ' && forever restart app.js || forever start app.js'
       },
       systemd: {
-        command: 'systemctl restart personalserver || systemctl start personalserver'
+        command: 'sudo systemctl restart personalserver || sudo systemctl start personalserver'
       }
     }
   });
