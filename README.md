@@ -4,7 +4,7 @@ This repository contains the source code for a web server that acts as a persona
 
 The server consumes files stored in a data directory and makes them publically available through a RESTful API that conforms to the [JSON API specification](http://jsonapi.org/). These files are formatted primarily in JSON but can also include secondary assets with any other format.
 
-This server is initially intended to support [a personal web app](https://github.com/markmhx/web) but can serve any number of use cases that require public access to personal data made available by individuals.
+This server is initially intended to support [a personal web app](https://github.com/asheville/personal-web) but can serve any number of use cases that require public access to personal data made available by individuals.
 
 ## Setting up the data
 
@@ -75,7 +75,7 @@ Note that the server will have to be restarted to recognize the addition or subt
 
 ## Setting up the environment
 
-The code requires one environment variable to run the server and several others to deploy the server to another system. The following environment variables can be declared by adding a file named `.env` (in [INI format](https://en.wikipedia.org/wiki/INI_file)) to the base directory, assuming they're not declared elsewhere in the system already. Such a file will be ignored by Git.
+The code requires the following environment variables to run or deploy the server. The following environment variables can be declared by adding a file named `.env` (in [INI format](https://en.wikipedia.org/wiki/INI_file)) to the base directory, assuming they're not declared elsewhere in the system already. Such a file will be ignored by Git.
 
 - `PERSONAL_SERVER_PORT`: Port through which to run the server locally (required to run app)
 - `PERSONAL_SERVER_DATA_DIR`: Local system path to data directory (required to run app)
@@ -84,19 +84,11 @@ The code requires one environment variable to run the server and several others 
 - `PERSONAL_SERVER_DEPLOY_DIR`: Remote system path to app directory on deployment server (required to deploy app)
 - `PERSONAL_SERVER_DEPLOY_DATA_DIR`: Remote system path to data directory on deployment server (required to deploy app)
 
-You can execute the following from the base directory to create such a file with a default value to run the server on port 4201:
+The value of `PERSONAL_SERVER_DATA_DIR` can be set the absolute path of `data` within the repository and the directory will be ignored by Git.
 
-```
-printf "PERSONAL_SERVER_PORT=4201\nPERSONAL_SERVER_DATA_DIR=data" > .env
-```
+The value of `PERSONAL_SERVER_DEPLOY_DATA_DIR` locally should match the value of `PERSONAL_SERVER_DATA_DIR` remotely to deploy data into the remote directory that the app actually uses there.
 
-If you intend to deploy the server to another system using the script below, you may also create a `.env-deploy` file in the base directory, one that will be ignored by Git and used upon deployment to create an `.env` file remotely, thereby setting environment variables on the deployment server. The following can be executed from the base directory to create such a file:
-
-```
-printf "PERSONAL_SERVER_PORT=4201\nPERSONAL_SERVER_DATA_DIR=data" > .env-deploy
-```
-
-Note that the value of `PERSONAL_SERVER_DEPLOY_DATA_DIR` locally should match the value of `PERSONAL_SERVER_DATA_DIR` remotely to deploy data into the remote directory that the app actually uses there.
+If you intend to deploy the server to another system using scripts within the "Developing and deploying" section below, you can also create a `.env-deploy` file in the base directory, one that will be ignored by Git and used upon deployment to create an `.env` file remotely, thereby setting environment variables on the deployment server.
 
 ## Running the server
 
@@ -123,3 +115,7 @@ With [Grunt](gruntjs.com) installed in addition to establishing your environment
 - `grunt deploy`: Deploys environment and certificate file dependencies, deploys the app, runs `npm install` remotely to ensure any new dependencies are installed, and either starts or restarts the app remotely with [forever](https://github.com/foreverjs/forever). Ensure that Node with NPM and forever are installed remotely before running this script.
 - `grunt deploy-dependencies`: Deploys environment and certificate file dependencies
 - `grunt deploy-app`: Deploys the app, runs `npm install` remotely to ensure any new dependencies are installed, and either starts or restarts the app remotely with forever.
+
+If you add `forever` to any of the deployment scripts (e.g. `grunt deploy forever`), [forever](https://github.com/foreverjs/forever) will be used to start or restart the app remotely post-deployment. Ensure that Node with NPM and forever are installed remotely before appending this script.
+
+If you add `systemd` to any of the deployment scripts (e.g. `grunt deploy systemd`), [systemd](https://www.digitalocean.com/community/tutorials/systemd-essentials-working-with-services-units-and-the-journal) will be used to start or restart the app remotely post-deployment. Ensure that Node and systemd with a service for the app called `personalserver` are installed remotely before running this script.
