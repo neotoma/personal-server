@@ -1,11 +1,4 @@
 {
-  "name": "personal-server",
-  "version": "1.0.0",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/asheville/personal-server.git"
-  },
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/asheville/personal-server/issues"
   },
@@ -24,5 +17,12 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-express-server": "^0.5.3",
     "load-grunt-tasks": "^3.5.0"
-  }
+  },
+  "license": "MIT",
+  "name": "personal-server",
+  "repository": "https://github.com/neotoma/personal-server",
+  "scripts": {
+    "dev": "grunt dev"
+  },
+  "version": "1.0.0"
 }
