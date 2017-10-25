@@ -1,25 +1,18 @@
-require('./lib/env');
+/**
+ * Configure Grunt scripts
+ * @module
+ */
+
+require('park-ranger')();
+var loadGruntTasks = require('load-grunt-tasks');
 
 module.exports = function(grunt) {
   'use strict';
 
-  require('load-grunt-tasks')(grunt);
-
   grunt.initConfig({
-    express: {
+    nodemon: {
       main: {
-        options: {
-          script: './app.js'
-        }
-      }
-    },
-    watch: {
-      express: {
-        files: ['**/*.js'],
-        tasks: ['express:main'],
-        options: {
-          spawn: false
-        }
+        script: 'index.js'
       }
     },
     rsync: {
@@ -76,13 +69,20 @@ module.exports = function(grunt) {
       systemd: {
         command: 'sudo systemctl restart personalserver || sudo systemctl start personalserver'
       }
+    },
+    symlink: {
+      modules: {
+        files: [{
+          expand: true,
+          cwd: './',
+          src: ['app'],
+          dest: 'node_modules'
+        }]
+      }
     }
   });
 
-  grunt.registerTask('dev', 'Run app locally and reload upon changes', [
-    'express:main',
-    'watch'
-  ]);
+  loadGruntTasks(grunt);
 
   grunt.registerTask('deploy', 'Deploy dependencies and app', [
     'deploy-dependencies',

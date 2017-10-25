@@ -1,28 +1,31 @@
 {
+  "author": "Mark McLeod Hendrickson <markmhendrickson@gmail.com> (http://markmhendrickson.com)",
   "bugs": {
-    "url": "https://github.com/asheville/personal-server/issues"
+    "url": "https://github.com/neotoma/personal-server/issues"
   },
   "dependencies": {
     "async": "^2.0.0-rc.6",
-    "dotenv": "^2.0.0",
     "express": "^4.14.0",
+    "park-ranger": "^1.0.11",
     "path": "^0.12.7",
     "pluralize": "^2.0.0",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "grunt": "^1.0.1",
+    "grunt": "~0.4.0",
+    "grunt-contrib-symlink": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-nodemon": "^0.4.2",
     "grunt-rsync": "^1.0.1",
     "grunt-ssh": "^0.12.9",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-express-server": "^0.5.3",
     "load-grunt-tasks": "^3.5.0"
   },
   "license": "MIT",
   "name": "personal-server",
   "repository": "https://github.com/neotoma/personal-server",
   "scripts": {
-    "dev": "grunt dev"
+    "dev": "grunt nodemon:main",
+    "postinstall": "grunt symlink:modules"
   },
   "version": "1.0.0"
 }
