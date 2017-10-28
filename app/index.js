@@ -16,7 +16,8 @@ module.exports.dataDirectory = dataDirectory = process.env.PERSONAL_SERVER_DATA_
 app.use('/assets', express.static(`${dataDirectory}/assets`));
 
 app.use('*', (req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
 

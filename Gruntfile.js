@@ -15,61 +15,6 @@ module.exports = function(grunt) {
         script: 'index.js'
       }
     },
-    rsync: {
-      options: {
-        host: process.env.PERSONAL_SERVER_DEPLOY_USERNAME + '@' + process.env.PERSONAL_SERVER_DEPLOY_HOST,
-        recursive: true
-      },
-      env: {
-        options: {
-          args: ['--rsync-path="mkdir -p ' + process.env.PERSONAL_SERVER_DEPLOY_DIR + ' && rsync"'],
-          src: '.env-deploy',
-          dest: process.env.PERSONAL_SERVER_DEPLOY_DIR + '/.env',
-        }
-      },
-      app: {
-        options: {
-          exclude: [
-            ".env*",
-            ".DS_Store",
-            ".git*",
-            "data",
-            "node_modules",
-            "*.sublime*"
-          ],
-          args: ['--rsync-path="mkdir -p ' + process.env.PERSONAL_SERVER_DEPLOY_DIR + ' && rsync"'],
-          src: './',
-          dest: process.env.PERSONAL_SERVER_DEPLOY_DIR
-        }
-      },
-      data: {
-        options: {
-          args: ['-v --rsync-path="mkdir -p ' + process.env.PERSONAL_SERVER_DEPLOY_DATA_DIR + ' && rsync"'],
-          src: process.env.PERSONAL_SERVER_DATA_DIR + '/',
-          dest: process.env.PERSONAL_SERVER_DEPLOY_DATA_DIR
-        }
-      }
-    },
-    sshexec: {
-      options: {
-        host: process.env.PERSONAL_SERVER_DEPLOY_HOST,
-        port: 22,
-        username: process.env.PERSONAL_SERVER_DEPLOY_USERNAME,
-        agent: process.env.SSH_AUTH_SOCK
-      },
-      npmInstall: {
-        command: 'cd ' + process.env.PERSONAL_SERVER_DEPLOY_DIR + ' && npm install --production'
-      },
-      deleteData: {
-        command: 'rm -rf ' + process.env.PERSONAL_SERVER_DEPLOY_DATA_DIR
-      },
-      forever: {
-        command: 'cd ' + process.env.PERSONAL_SERVER_DEPLOY_DIR + ' && forever restart app.js || forever start app.js'
-      },
-      systemd: {
-        command: 'sudo systemctl restart personalserver || sudo systemctl start personalserver'
-      }
-    },
     symlink: {
       modules: {
         files: [{
