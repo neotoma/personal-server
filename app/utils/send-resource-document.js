@@ -57,10 +57,12 @@ module.exports = function(req, res, data) {
         relatedResourceObjects = getRelatedResourceObjects(data, include, req);
       }
 
-      relatedResourceObjects = relatedResourceObjects.filter((n) => n); 
-      
-      if (relatedResourceObjects.length > 0) {
-        document.included = relatedResourceObjects;
+      if (relatedResourceObjects) {
+        relatedResourceObjects = relatedResourceObjects.filter((n) => n);
+
+        if (relatedResourceObjects.length > 0) {
+          document.included = relatedResourceObjects;
+        }
       }
     }
 

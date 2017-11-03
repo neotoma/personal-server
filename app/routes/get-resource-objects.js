@@ -7,6 +7,12 @@ var path = require('path');
 var sendResourceDocument = require('app/utils/send-resource-document');
 
 module.exports = function(req, res) {
+  // Replace with proper directory check regardless of presence of dot
+  // Security check directory navigation with dots
+  if (req.params.type.indexOf('.') !== -1) {
+    return res.status(404).send('Not Found');
+  }
+
   var directory = `${app.dataDirectory}/${req.params.type}`;
   
   var readDirectory = (done) => {
