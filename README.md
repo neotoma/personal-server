@@ -79,16 +79,8 @@ The code requires the following environment variables to run or deploy the serve
 
 - `PERSONAL_SERVER_PORT`: Port through which to run the server locally (required to run app)
 - `PERSONAL_SERVER_DATA_DIRS`: Local system paths to data directories, comma-delimited (required to run app)
-- `PERSONAL_SERVER_DEPLOY_USERNAME`: User name with which to SSH into remote deployment server (required to deploy app)
-- `PERSONAL_SERVER_DEPLOY_HOST`: Address of the remote deployment server (required to deploy app)
-- `PERSONAL_SERVER_DEPLOY_DIR`: Remote system path to app directory on deployment server (required to deploy app)
-- `PERSONAL_SERVER_DEPLOY_DATA_DIR`: Remote system path to data directory on deployment server (required to deploy app)
 
-The value of `PERSONAL_SERVER_DATA_DIR` can be set the absolute path of `data` within the repository and the directory will be ignored by Git.
-
-The value of `PERSONAL_SERVER_DEPLOY_DATA_DIR` locally should match the value of `PERSONAL_SERVER_DATA_DIR` remotely to deploy data into the remote directory that the app actually uses there.
-
-If you intend to deploy the server to another system using scripts within the "Developing and deploying" section below, you can also create a `.env-deploy` file in the base directory, one that will be ignored by Git and used upon deployment to create an `.env` file remotely, thereby setting environment variables on the deployment server.
+The value of `PERSONAL_SERVER_DATA_DIRS` can be set the absolute path of `data` within the repository and the directory will be ignored by Git.
 
 ## Running the server
 
@@ -108,14 +100,8 @@ As mentioned above, all files stored within `data/assets` can be queried with th
 
 ## Developing and deploying
 
-With [Grunt](gruntjs.com) installed in addition to establishing your environment and data accordingly per the instructions above, you can run any of the following scripts to help with development and deployment:
+You can run any of the following scripts to help with development:
 
-- `grunt dev`: Runs the app and automatically reloads it when code changes are made during development
-- `grunt deploy-data`: Deploys the data directory remotely. Running this script is highly recommended before deploying and running the app itself remotely.
-- `grunt deploy`: Deploys environment and certificate file dependencies, deploys the app, runs `npm install` remotely to ensure any new dependencies are installed, and either starts or restarts the app remotely with [forever](https://github.com/foreverjs/forever). Ensure that Node with NPM and forever are installed remotely before running this script.
-- `grunt deploy-dependencies`: Deploys environment and certificate file dependencies
-- `grunt deploy-app`: Deploys the app, runs `npm install` remotely to ensure any new dependencies are installed, and either starts or restarts the app remotely with forever.
+- `npm run dev`: Runs the app and automatically reloads it when code changes are made during development
 
-If you add `forever` to any of the deployment scripts (e.g. `grunt deploy forever`), [forever](https://github.com/foreverjs/forever) will be used to start or restart the app remotely post-deployment. Ensure that Node with NPM and forever are installed remotely before appending this script.
-
-If you add `systemd` to any of the deployment scripts (e.g. `grunt deploy systemd`), [systemd](https://www.digitalocean.com/community/tutorials/systemd-essentials-working-with-services-units-and-the-journal) will be used to start or restart the app remotely post-deployment. Ensure that Node and systemd with a service for the app called `personalserver` are installed remotely before running this script.
+Deployment scripts are available through [Hoist](https://github.com/markmhx/grunt-hoist).
