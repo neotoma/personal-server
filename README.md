@@ -78,7 +78,7 @@ Note that the server will have to be restarted to recognize the addition or subt
 The code requires the following environment variables to run or deploy the server. The following environment variables can be declared by adding a file named `.env` (in [INI format](https://en.wikipedia.org/wiki/INI_file)) to the base directory, assuming they're not declared elsewhere in the system already. Such a file will be ignored by Git.
 
 - `PERSONAL_SERVER_PORT`: Port through which to run the server locally (required to run app)
-- `PERSONAL_SERVER_DATA_DIR`: Local system path to data directory (required to run app)
+- `PERSONAL_SERVER_DATA_DIRS`: Local system paths to data directories, comma-delimited (required to run app)
 - `PERSONAL_SERVER_DEPLOY_USERNAME`: User name with which to SSH into remote deployment server (required to deploy app)
 - `PERSONAL_SERVER_DEPLOY_HOST`: Address of the remote deployment server (required to deploy app)
 - `PERSONAL_SERVER_DEPLOY_DIR`: Remote system path to app directory on deployment server (required to deploy app)

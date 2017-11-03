@@ -7,13 +7,15 @@ var getResourceObjects = require('app/routes/get-resource-objects');
 
 var app = express();
 
-if (!process.env.PERSONAL_SERVER_DATA_DIR) {
+if (!process.env.PERSONAL_SERVER_DATA_DIRS) {
   throw new Error('App failed to find server data directory variable from environment');
 }
 
-module.exports.dataDirectory = dataDirectory = process.env.PERSONAL_SERVER_DATA_DIR;
+module.exports.dataDirectories = dataDirectories = process.env.PERSONAL_SERVER_DATA_DIRS.split(',');
 
-app.use('/assets', express.static(`${dataDirectory}/assets`));
+dataDirectories.forEach((dataDirectory) => {
+  app.use('/assets', express.static(`${dataDirectory}/assets`));
+});
 
 app.use('*', (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
