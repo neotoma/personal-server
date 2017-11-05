@@ -1,5 +1,4 @@
 *.log
-*.sublime-workspace
 .env*
 data
 node_modules
