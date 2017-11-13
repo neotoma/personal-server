@@ -10,6 +10,10 @@ module.exports = function(type, id, req) {
       var buffer = fs.readFileSync(`${dataDirectory}/${type}/${id}.json`);
       json = JSON.parse(buffer);
 
+      if (fs.existsSync(`${dataDirectory}/${type}/${id}.md`)) {
+        json.attributes.body = fs.readFileSync(`${dataDirectory}/${type}/${id}.md`, "utf8");
+      }
+
       if (req) {
         json = convertResourceObjectUrlsToAbsolute(json, req);
       }

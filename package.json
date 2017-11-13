@@ -20,6 +20,9 @@
     "pluralize": "^2.0.0",
     "underscore": "^1.8.3"
   },
+  "engines": {
+    "node": ">=8.9.1"
+  },
   "license": "MIT",
   "name": "personal-server",
   "repository": "https://github.com/neotoma/personal-server",
@@ -31,5 +34,5 @@
     "postinstall": "grunt symlink:modules",
     "start": "node index.js"
   },
-  "version": "1.0.0"
+  "version": "0.1.0"
 }
