@@ -46,7 +46,15 @@ module.exports = function(req, res) {
 
         async.map(files, fs.readFile, function(error, bufferArray) {
           if (bufferArray) {
-            bufferArray = bufferArray.map((buffer) => JSON.parse(buffer));
+            bufferArray = bufferArray.map((buffer) => { 
+              var json = JSON.parse(buffer);
+
+              if (fs.existsSync(`${directory}/${json.id}.md`)) {
+                json.attributes.body = fs.readFileSync(`${directory}/${json.id}.md`, "utf8");
+              }
+
+              return json;
+            });
           }
 
           done(error, bufferArray);
