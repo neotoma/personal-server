@@ -14,6 +14,16 @@ module.exports = function(grunt) {
       main: {
         script: 'index.js'
       }
+    },
+    symlink: {
+      modules: {
+        files: [{
+          expand: true,
+          cwd: './',
+          src: ['app'],
+          dest: 'node_modules'
+        }]
+      }
     }
   });
 
