@@ -1,74 +1,70 @@
-var _ = require('underscore');
-var dumpError = require('app/utils/dump-error');
-var getRelatedResourceObjects = require('app/utils/get-related-resource-documents');
+var _ = require('underscore'),
+  async = require('async'),
+  convertResourceObjectUrlsToAbsolute = require('app/utils/convert-resource-object-urls-to-absolute'),
+  debug = require('app/lib/debug'),
+  getRelatedResourceObjects = require('app/utils/get-related-resource-objects');
 
 module.exports = function(req, res, data) {
-  if (typeof data === 'undefined' || !data) {
+  let included;
+
+  if (!data) {
     return res.status(404).send('Not Found');
   }
 
-  try {
-    res.setHeader('Content-Type', 'application/json');
+  let limit = (done) => {
+    if (!Array.isArray(data)) { return done(); }
 
+    data = data.slice(0, req.query.limit ? req.query.limit : 50);
+
+    done();
+  };
+
+  let convertUrls = (done) => {
     if (Array.isArray(data)) {
-      data = _.sortBy(data, function(item) {
-        if (typeof item['published-at'] !== 'undefined') {
-          return Number(item['published-at']);
-        } else if (!isNaN(item['id'])) {
-          return parseFloat(item['id']);
-        } else {
-          return item['id'];
-        }
+      data.map((resourceObject) => {
+        return convertResourceObjectUrlsToAbsolute(resourceObject, req);
       });
-
-      data.reverse();
-
-      if (req.query.filter) {
-        data = data.filter(function(el, i) {
-          for (var key in req.query.filter) {
-            if (el.attributes[key] !== req.query.filter[key]) {
-              return false;
-            }
-          }
-          return true;
-        });
-      }
-
-      if (req.query.limit) {
-        data = data.slice(0, req.query.limit);
-      }
+    } else {
+      data = convertResourceObjectUrlsToAbsolute(data, req);
     }
 
-    if (!data) {
-      return res.status(404).send('Not Found');
-    }
+    done();
+  };
 
-    var document = { data: data };
+  let include = (done) => {
+    if (!req.query.include) { return done(); }
 
-    if (req.query.include) {
-      var include = req.query.include.split(',');
-      var relatedResourceObjects = [];
+    var include = req.query.include.split(',');
+    var relatedResourceObjects = [];
+    var resourceObjects = Array.isArray(data) ? data : [data];
 
-      if (Array.isArray(data)) {
-        data.forEach((resourceObject) => {
-          relatedResourceObjects = relatedResourceObjects.concat(getRelatedResourceObjects(resourceObject, include, req));
-        });
-      } else {
-        relatedResourceObjects = getRelatedResourceObjects(data, include, req);
-      }
-
+    async.map(resourceObjects, (resourceObject, done) => {
+      getRelatedResourceObjects(resourceObject, include, req, done);
+    }, (error, relatedResourceObjects) => {
       if (relatedResourceObjects) {
-        relatedResourceObjects = relatedResourceObjects.filter((n) => n);
+        relatedResourceObjects = _.flatten(relatedResourceObjects.filter((o) => o));
 
         if (relatedResourceObjects.length > 0) {
-          document.included = relatedResourceObjects;
+          included = relatedResourceObjects;
         }
       }
-    }
 
-    res.send(document);
-  } catch(error) {
-    dumpError(error);
-    return res.status(500).send('Internal Server Error');
-  }
+      done(error, relatedResourceObjects);
+    });
+  };
+
+  async.waterfall([limit, convertUrls, include], (error) => {
+    res.setHeader('Content-Type', 'application/json');
+
+    if (error) {
+      res.status(500).send('Internal Server Error');
+    } else if (!data) {
+      res.status(404).send('Not Found');
+    } else {
+      res.send({ 
+        data: data,
+        included: included
+      });
+    }
+  });
 };

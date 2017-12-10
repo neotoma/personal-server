@@ -80,9 +80,10 @@ The code requires the following environment variables to run or deploy the serve
 ## Optional
 
 - `PERSONAL_SERVER_PORT`: Port through which to run the server locally (defaults to `9100`)
-- `PERSONAL_SERVER_DATA_DIRS`: Local system paths to data directories, comma-delimited (defaults to `data`)
+- `PERSONAL_SERVER_MODEL_DIRS`: Local system paths to data directories, comma-delimited (defaults to `data`)
+- `PERSONAL_SERVER_PRESERVE_MODEL`: Set to "true" to prevent server from reloading all data files into Redis cache on start
 
-The value of `PERSONAL_SERVER_DATA_DIRS` can be set the absolute path of `data` within the repository and the directory will be ignored by Git.
+The value of `PERSONAL_SERVER_MODEL_DIRS` can be set the absolute path of `data` within the repository and the directory will be ignored by Git.
 
 ## Running the server
 
