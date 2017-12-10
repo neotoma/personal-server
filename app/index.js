@@ -1,17 +1,16 @@
-var dumpError = require('app/utils/dump-error');
-var express = require('express');
-var fs = require('fs');
-var path = require('path');
-var getResourceObject = require('app/routes/get-resource-object');
-var getResourceObjects = require('app/routes/get-resource-objects');
+var debug = require('app/lib/debug'),
+  express = require('express'),
+  getResourceObject = require('app/routes/get-resource-object'),
+  getResourceObjects = require('app/routes/get-resource-objects'),
+  model = require('app/lib/model'),
+  path = require('path');
 
-var app = express();
-var dirs = process.env.PERSONAL_SERVER_DATA_DIRS ? process.env.PERSONAL_SERVER_DATA_DIRS : 'data';
+var app = module.exports = express();
 
-module.exports.dataDirectories = dataDirectories = dirs.split(',');
-
-dataDirectories.forEach((dataDirectory) => {
-  app.use('/assets', express.static(`${dataDirectory}/assets`));
+model.init({
+  app: app,
+  directories: process.env.PERSONAL_SERVER_MODEL_DIRS ? process.env.PERSONAL_SERVER_MODEL_DIRS : 'data',
+  reload: (process.env.PERSONAL_SERVER_PRESERVE_MODEL !== 'true')
 });
 
 app.use('*', (req, res, next) => {
@@ -20,7 +19,5 @@ app.use('*', (req, res, next) => {
   next();
 });
 
-app.get('/:type/:id', getResourceObject);
 app.get('/:type', getResourceObjects);
-
-module.exports = app;
+app.get('/:type/:id', getResourceObject);
