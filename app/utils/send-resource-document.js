@@ -49,6 +49,10 @@ module.exports = function(req, res, data) {
         }
       }
 
+      relatedResourceObjects.map((relatedResourceObject) => {
+        return convertResourceObjectUrlsToAbsolute(relatedResourceObject, req);
+      });
+
       done(error, relatedResourceObjects);
     });
   };

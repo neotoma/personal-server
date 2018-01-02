@@ -3,14 +3,16 @@ var debug = require('app/lib/debug'),
   getResourceObject = require('app/routes/get-resource-object'),
   getResourceObjects = require('app/routes/get-resource-objects'),
   model = require('app/lib/model'),
-  path = require('path');
-
-var app = module.exports = express();
+  path = require('path'),
+  app = express();
 
 model.init({
-  app: app,
   directories: process.env.PERSONAL_SERVER_MODEL_DIRS ? process.env.PERSONAL_SERVER_MODEL_DIRS : 'data',
   reload: (process.env.PERSONAL_SERVER_PRESERVE_MODEL !== 'true')
+});
+
+model.assetDirectories.forEach((path) => {
+  app.use('/assets', express.static(path));
 });
 
 app.use('*', (req, res, next) => {
@@ -21,3 +23,5 @@ app.use('*', (req, res, next) => {
 
 app.get('/:type', getResourceObjects);
 app.get('/:type/:id', getResourceObject);
+
+module.exports = app;

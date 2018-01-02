@@ -12,12 +12,12 @@ var _ = require('underscore'),
 var model = {};
 
 model.init = function(options) {
-  var directories = Array.isArray(options.directories) ? options.directories : options.directories.split(',');
+  let directories = Array.isArray(options.directories) ? options.directories : options.directories.split(',');
+
+  this.assetDirectories = [];
 
   directories.forEach((directory) => {
-    if (options.app) {
-      options.app.use('/assets', express.static(`${directory}/assets`));
-    }
+    this.assetDirectories.push(`${directory}/assets`);
 
     chokidar.watch(directory, {
       ignoreInitial: !options.reload
@@ -78,7 +78,6 @@ model.getMany = function(type, options, done) {
         var passes = true;
 
         Object.keys(options.filter).forEach((key) => {
-          console.log(options.filter[key]);
           var comparisonObject = (key === 'id') ? resourceObject : resourceObject.attributes;
 
           if (comparisonObject[key] !== options.filter[key]) {
@@ -88,8 +87,6 @@ model.getMany = function(type, options, done) {
 
         return passes;
       });
-
-      console.log('filter!', options.filter, resourceObjects);
 
       done();
     };
