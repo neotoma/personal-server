@@ -1,4 +1,4 @@
-var _ = require('underscore'), 
+var _ = require('lodash'), 
   app = require('app'),
   async = require('async'),
   chokidar = require('chokidar'),
@@ -102,7 +102,7 @@ model.getMany = function(type, options, done) {
         sort = options.sort.substring(1);
       }
 
-      resourceObjects = _.sortBy(resourceObjects, (resourceObject) => resourceObject.attributes[sort]);
+      resourceObjects = _.sortBy(resourceObjects, (resourceObject) => resourceObject.attributes[_.kebabCase(sort)]);
 
       if (!asc) {
         resourceObjects.reverse();

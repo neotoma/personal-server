@@ -1,4 +1,4 @@
-var _ = require('underscore'),
+var _ = require('lodash'),
   async = require('async'),
   convertResourceObjectUrlsToAbsolute = require('app/utils/convert-resource-object-urls-to-absolute'),
   debug = require('app/lib/debug'),

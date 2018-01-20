@@ -17,14 +17,12 @@
     "grunt-rsync": "^1.0.1",
     "grunt-ssh": "^0.12.9",
     "load-grunt-tasks": "^3.5.0",
+    "lodash": "^4.17.4",
     "park-ranger": "^1.0.11",
     "path": "^0.12.7",
     "pluralize": "^2.0.0",
     "redis": "^2.8.0",
     "underscore": "^1.8.3"
-  }, 
-  "engines": {
-    "node": "8.9.3"
   },
   "engines": {
     "node": ">=8.9.1"
