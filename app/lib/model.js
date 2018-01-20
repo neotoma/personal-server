@@ -27,7 +27,12 @@ model.init = function(options) {
       if (path.indexOf('.backup') !== -1) { return; }
 
       fs.readFile(path, (error, data) => {
-        var json = JSON.parse(data);
+        try {
+          var json = JSON.parse(data);
+        } catch (error) {
+          return debug(`unable to parse JSON from file ${path}`);
+        }
+
         var resourceObjects = Array.isArray(json) ? json : [json];
 
         resourceObjects.forEach((resourceObject) => {
