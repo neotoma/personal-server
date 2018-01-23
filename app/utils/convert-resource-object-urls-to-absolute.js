@@ -1,7 +1,9 @@
-var _ = require('underscore');
-var path = require('path');
+var _ = require('underscore'),
+  path = require('path');
 
 module.exports = function(resourceObject, req) {
+  if (!resourceObject || !req) { return; }
+
   var isRelativeUrlProperty = function(key, val) {
     return (key.indexOf('-url') === (key.length - 4) && val.indexOf('/') === 0);
   };

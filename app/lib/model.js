@@ -5,6 +5,7 @@ var _ = require('lodash'),
   debug = require('debug')('personalServer'),
   express = require('express'),
   fs = require('fs'),
+  isNumeric = require('app/utils/is-numeric'),
   Path = require('path'),
   redis = require('redis'),
   client = redis.createClient();
@@ -12,6 +13,8 @@ var _ = require('lodash'),
 var model = {};
 
 model.init = function(options) {
+  client.flushdb();
+
   let directories = Array.isArray(options.directories) ? options.directories : options.directories.split(',');
 
   this.assetDirectories = [];
@@ -84,8 +87,9 @@ model.getMany = function(type, options, done) {
 
         Object.keys(options.filter).forEach((key) => {
           var comparisonObject = (key === 'id') ? resourceObject : resourceObject.attributes;
+          var filterValue = isNumeric(options.filter[key]) ? parseInt(options.filter[key]) : options.filter[key];
 
-          if (comparisonObject[key] !== options.filter[key]) {
+          if (comparisonObject[key] !== filterValue) {
             passes = false;
           }
         });
