@@ -1,7 +1,7 @@
 var app = require('app'),
   convertResourceObjectUrlsToAbsolute = require('app/utils/convert-resource-object-urls-to-absolute'),
   debug = require('app/lib/debug'),
-  fs = require('fs');
+  fs = require('graceful-fs');
 
 module.exports = function(type, id, req) {
   var json;

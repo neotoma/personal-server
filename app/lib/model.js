@@ -4,7 +4,7 @@ var _ = require('lodash'),
   chokidar = require('chokidar'),
   debug = require('debug')('personalServer'),
   express = require('express'),
-  fs = require('fs'),
+  fs = require('graceful-fs'),
   isNumeric = require('app/utils/is-numeric'),
   Path = require('path'),
   redis = require('redis'),
@@ -30,6 +30,10 @@ model.init = function(options) {
       if (path.indexOf('.backup') !== -1) { return; }
 
       fs.readFile(path, (error, data) => {
+        if (error) {
+          return debug(`encountered error trying to read file: ${error.message}`);
+        }
+
         try {
           var json = JSON.parse(data);
         } catch (error) {
