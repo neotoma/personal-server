@@ -1,10 +1,13 @@
 var debug = require('app/lib/debug'),
+  compression = require('compression'),
   express = require('express'),
   getResourceObject = require('app/routes/get-resource-object'),
   getResourceObjects = require('app/routes/get-resource-objects'),
   model = require('app/lib/model'),
   path = require('path'),
   app = express();
+
+app.use(compression());
 
 model.init({
   directories: process.env.PERSONAL_SERVER_MODEL_DIRS ? process.env.PERSONAL_SERVER_MODEL_DIRS : 'data',

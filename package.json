@@ -6,6 +6,7 @@
   "dependencies": {
     "async": "^2.0.0-rc.6",
     "chokidar": "^1.7.0",
+    "compression": "^1.7.1",
     "debug": "^3.1.0",
     "express": "^4.14.0",
     "graceful-fs": "^4.1.11",
