@@ -14,7 +14,9 @@ module.exports = function(req, res, data) {
   let limit = (done) => {
     if (!Array.isArray(data)) { return done(); }
 
-    data = data.slice(0, req.query.limit ? req.query.limit : 50);
+    if (req.query.limit) {
+      data = data.slice(0, req.query.limit);
+    }
 
     done();
   };
