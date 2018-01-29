@@ -107,20 +107,32 @@ model.getMany = function(type, options, done) {
     let sort = (done) => {
       if (!options.sort) { return done(); }
 
-      var asc = true;
-      var sort = options.sort;
+      var sortByNames = [], 
+        sortByOrders = [];
 
-      if (options.sort[0] === '-') {
-        asc = false;
-        sort = options.sort.substring(1);
-      }
+      var attribute = function(resourceObject, propertyName) {
+        if (propertyName === 'id') {
+          return resourceObject.id;
+        } else {
+          return resourceObject.attributes[_.kebabCase(propertyName)];
+        }
+      };
 
-      resourceObjects = _.sortBy(resourceObjects, (resourceObject) => resourceObject.attributes[_.kebabCase(sort)]);
+      options.sort.split(',').forEach((sort) => {
+        if (options.sort[0] === '-') {
+          sortByNames.push(function(resourceObject) {
+            return attribute(resourceObject, sort.substring(1));
+          });
+          sortByOrders.push('desc');
+        } else {
+          sortByNames.push(function(resourceObject) {
+            return attribute(resourceObject, sort);
+          });
+          sortByOrders.push('asc');
+        }
+      });
 
-      if (!asc) {
-        resourceObjects.reverse();
-      }
-
+      resourceObjects = _.orderBy(resourceObjects, sortByNames, sortByOrders);
       done();
     };
 

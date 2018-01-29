@@ -1,5 +1,5 @@
 var app = require('app'),
-  convertResourceObjectUrlsToAbsolute = require('app/utils/convert-resource-object-urls-to-absolute'),
+  convertResourceObjectUrls = require('app/utils/convert-resource-object-urls'),
   debug = require('app/lib/debug'),
   fs = require('graceful-fs');
 
@@ -22,7 +22,7 @@ module.exports = function(type, id, req) {
         }
 
         if (req) {
-          json = convertResourceObjectUrlsToAbsolute(json, req);
+          json = convertResourceObjectUrls(json, req);
         }
       } catch(error) {
         debug(`unable to get resource object from file: ${path}`);

@@ -1,6 +1,6 @@
 var _ = require('lodash'),
   async = require('async'),
-  convertResourceObjectUrlsToAbsolute = require('app/utils/convert-resource-object-urls-to-absolute'),
+  convertResourceObjectUrls = require('app/utils/convert-resource-object-urls'),
   debug = require('app/lib/debug'),
   getRelatedResourceObjects = require('app/utils/get-related-resource-objects');
 
@@ -24,10 +24,10 @@ module.exports = function(req, res, data) {
   let convertUrls = (done) => {
     if (Array.isArray(data)) {
       data.map((resourceObject) => {
-        return convertResourceObjectUrlsToAbsolute(resourceObject, req);
+        return convertResourceObjectUrls(resourceObject, req);
       });
     } else {
-      data = convertResourceObjectUrlsToAbsolute(data, req);
+      data = convertResourceObjectUrls(data, req);
     }
 
     done();
@@ -52,7 +52,7 @@ module.exports = function(req, res, data) {
       }
 
       relatedResourceObjects.map((relatedResourceObject) => {
-        return convertResourceObjectUrlsToAbsolute(relatedResourceObject, req);
+        return convertResourceObjectUrls(relatedResourceObject, req);
       });
 
       done(error, relatedResourceObjects);
