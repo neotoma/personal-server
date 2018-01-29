@@ -48,6 +48,12 @@ module.exports = function(resourceObject, req) {
             h: 2000,
             w: 2000
           });
+
+          resourceObject.attributes[`panoramic-${key}`] = imgix.buildURL(resourceObject.attributes[key], {
+            fit: 'max',
+            h: 1000,
+            w: 5000
+          });
         }
       } else {
         resourceObject.attributes[key] = url;
