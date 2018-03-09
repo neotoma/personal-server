@@ -5,11 +5,13 @@ var _ = require('lodash'),
   getRelatedResourceObjects = require('app/utils/get-related-resource-objects');
 
 module.exports = function(req, res, data) {
-  let included;
-
   if (!data) {
-    return res.status(404).send('Not Found');
+    return res.send({ 
+      data: []
+    });
   }
+
+  let included;
 
   let limit = (done) => {
     if (!Array.isArray(data)) { return done(); }
@@ -65,7 +67,9 @@ module.exports = function(req, res, data) {
     if (error) {
       res.status(500).send('Internal Server Error');
     } else if (!data) {
-      res.status(404).send('Not Found');
+      res.send({ 
+        data: []
+      });
     } else {
       res.send({ 
         data: data,

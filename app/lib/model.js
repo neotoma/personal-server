@@ -2,15 +2,18 @@ var _ = require('lodash'),
   app = require('app'),
   async = require('async'),
   chokidar = require('chokidar'),
-  debug = require('debug')('personalServer'),
   express = require('express'),
-  fs = require('graceful-fs'),
   isNumeric = require('app/utils/is-numeric'),
-  Path = require('path'),
+  loadMarkdownFile = require('app/utils/load-markdown-file'),
+  loadResourceObjectsFile = require('app/utils/load-resource-objects-file'),
   redis = require('redis'),
   client = redis.createClient();
 
 var model = {};
+
+model.deleteOne = function(type, id) {
+  client.hdel(type, id);
+};
 
 model.init = function(options) {
   client.flushdb();
@@ -26,47 +29,19 @@ model.init = function(options) {
       ignoreInitial: !options.reload
     }).on('all', (event, path) => {
       if (!['add', 'change'].includes(event)) { return; }
-      if (!path.endsWith('.json')) { return; }
       if (path.indexOf('.backup') !== -1) { return; }
 
-      fs.readFile(path, (error, data) => {
-        if (error) {
-          return debug(`encountered error trying to read file: ${error.message}`);
-        }
-
-        try {
-          var json = JSON.parse(data);
-        } catch (error) {
-          return debug(`unable to parse JSON from file ${path}`);
-        }
-
-        var resourceObjects = Array.isArray(json) ? json : [json];
-
-        resourceObjects.forEach((resourceObject) => {
-          if (!resourceObject.type || !resourceObject.id) {
-            return debug(`skipped non-resource-object ${path}`);
-          }
-
-          var markdownPath = `${Path.dirname(path)}/${resourceObject.id}.md`;
-
-          if (fs.existsSync(markdownPath)) {
-            resourceObject.attributes.body = fs.readFileSync(markdownPath, "utf8");
-          }
-
-          model.setOne(resourceObject.type, resourceObject.id, resourceObject);
-
-          switch (event) {
-            case 'add':
-              debug(`added ${resourceObject.type} ${resourceObject.id}`);
-              break;
-            case 'change':
-              debug(`changed ${resourceObject.type} ${resourceObject.id}`);
-              break;
-          }
-        });
-      });
+      if (path.endsWith('.json')) {
+        loadResourceObjectsFile(model, path, event);
+      } else if (path.endsWith('.md')) {
+        loadMarkdownFile(model, path, event);
+      }
     });
   });
+};
+
+model.getBodyAttribute = function(type, id, done) {
+  model.getOne('body-attributes', `${type}:${id}`, done);
 };
 
 model.getOne = function(type, id, done) {
@@ -79,7 +54,7 @@ model.getMany = function(type, options, done) {
   if (typeof done === 'undefined') { done = options; unset(options); }
 
   client.hgetall(type, (error, resourceObjectsHash) => {
-    if (!resourceObjectsHash) { return done(error); }
+    if (!resourceObjectsHash) { return done(error, null); }
 
     var resourceObjects = Object.values(resourceObjectsHash).map((o) => JSON.parse(o));
 
@@ -142,8 +117,54 @@ model.getMany = function(type, options, done) {
   });
 };
 
-model.setOne = function(type, id, resourceObject) {
-  client.hset(type, id, JSON.stringify(resourceObject));
+model.getManyResourceObjects = function(type, id, done) {
+  var getMany = (done) => {
+    model.getMany(type, id, done);
+  };
+
+  var getBody = (resourceObjects, done) => {
+    if (resourceObjects && resourceObjects.length) {
+      async.map(resourceObjects, (resourceObject, done) => {
+        model.getBodyAttribute(resourceObject.type, resourceObject.id, (error, body) => {
+          if (body) {
+            resourceObject.attributes.body = body;
+          }
+
+          done(error, resourceObject);
+        })
+      }, done);
+    } else {
+      done();
+    }
+  };
+
+  async.waterfall([getMany, getBody], done);
+};
+
+model.setOne = function(type, id, object, done) {
+  client.hset(type, id, JSON.stringify(object), done);
+};
+
+model.getResourceObject = function(type, id, done) {
+  var getOne = (done) => {
+    model.getOne(type, id, done);
+  };
+
+  var getBody = (resourceObject, done) => {
+    if (resourceObject) {
+      model.getBodyAttribute(type, id, (error, body) => {
+        if (body) {
+          resourceObject.attributes.body = body;
+        }
+
+        done(error, resourceObject);
+      });
+    } else {
+      done();
+    }
+  };
+
+  async.waterfall([getOne, getBody], done);
 };
 
 module.exports = model;

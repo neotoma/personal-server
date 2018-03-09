@@ -2,7 +2,7 @@ var model = require('app/lib/model'),
   sendResourceDocument = require('app/utils/send-resource-document');
 
 module.exports = function(req, res) {
-  model.getMany(req.params.type, {
+  model.getManyResourceObjects(req.params.type, {
     filter: req.query.filter,
     sort: req.query.sort
   }, (error, resourceObjects) => {

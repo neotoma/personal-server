@@ -4,10 +4,10 @@ var _ = require('underscore'),
   isImage = require('is-image'),
   path = require('path');
 
-if (process.env.PERSONAL_WEB_IMGIX_HOST && process.env.PERSONAL_WEB_IMGIX_SECURITY_TOKEN) {
+if (process.env.PERSONAL_SERVER_IMGIX_HOST && process.env.PERSONAL_SERVER_IMGIX_SECURITY_TOKEN) {
   imgix = new ImgixClient({
-    host: process.env.PERSONAL_WEB_IMGIX_HOST,
-    secureURLToken: process.env.PERSONAL_WEB_IMGIX_SECURITY_TOKEN
+    host: process.env.PERSONAL_SERVER_IMGIX_HOST,
+    secureURLToken: process.env.PERSONAL_SERVER_IMGIX_SECURITY_TOKEN
   });
 }
 
@@ -24,8 +24,8 @@ module.exports = function(resourceObject, req) {
     if (typeof url !== 'string' || !isImage(url)) { return; }
 
     if (isRelativeUrl(url)) {
-      if (req.headers.host.indexOf('127.0.0.1') === 0 && process.env.PERSONAL_WEB_IMGIX_DEPLOY_HOST) {
-        url = 'http://' + path.join(process.env.PERSONAL_WEB_IMGIX_DEPLOY_HOST, url);
+      if (req.headers.host.indexOf('127.0.0.1') === 0 && process.env.PERSONAL_SERVER_IMGIX_DEPLOY_HOST) {
+        url = 'http://' + path.join(process.env.PERSONAL_SERVER_IMGIX_DEPLOY_HOST, url);
       } else {
         url = 'http://' + path.join(req.headers.host, url);
       }
