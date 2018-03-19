@@ -2,6 +2,7 @@ var _ = require('lodash'),
   app = require('app'),
   async = require('async'),
   chokidar = require('chokidar'),
+  debug = require('debug')('personalServer:model'),
   express = require('express'),
   isNumeric = require('app/utils/is-numeric'),
   loadMarkdownFile = require('app/utils/load-markdown-file'),
@@ -10,6 +11,39 @@ var _ = require('lodash'),
   client = redis.createClient();
 
 var model = {};
+
+/**
+ * Add all attributes from model to resource object
+ * @param {Object} resourceObject – Resource object
+ * @param {function} done - Error-first callback
+ */
+model.addAttributesToResourceObject = function(resourceObject, done) {
+  if (!resourceObject) { return done(); }
+
+  model.getResourceObjectAttributes(resourceObject.type, resourceObject.id, (error, attributes) => {
+    if (attributes) {
+      Object.keys(attributes).forEach((name) => {
+        resourceObject.attributes[name] = attributes[name];
+      });
+    }
+
+    done(error, resourceObject);
+  });
+};
+
+model.deleteAll = function(type) {
+  client.hgetall(type, (error, objects) => {
+    if (!objects) { return; }
+
+    objects = Object.values(objects).map((o) => JSON.parse(o));
+
+    objects.forEach((object) => {
+      if (object.id) {
+        model.deleteOne(type, object.id);
+      }
+    });
+  });
+};
 
 model.deleteOne = function(type, id) {
   client.hdel(type, id);
@@ -40,8 +74,23 @@ model.init = function(options) {
   });
 };
 
-model.getBodyAttribute = function(type, id, done) {
-  model.getOne('body-attributes', `${type}:${id}`, done);
+model.getResourceObjectAttributes = function(type, id, done) {
+  client.smembers(`${type}:${id}`, (error, attributes) => {
+    try {
+      if (attributes.length) {
+        try {
+          attributes = JSON.parse(attributes);
+        } catch(error) {
+          debug('unable to parse getResourceObjectAttributes from model store', attributes);
+        }
+      }
+    } catch (error) {
+      debug('unable to parse JSON', type, id, error);
+      return done(error);
+    }
+
+    done(error, attributes);
+  });
 };
 
 model.getOne = function(type, id, done) {
@@ -122,23 +171,29 @@ model.getManyResourceObjects = function(type, id, done) {
     model.getMany(type, id, done);
   };
 
-  var getBody = (resourceObjects, done) => {
+  var addAttributesToResourceObjects = (resourceObjects, done) => {
     if (resourceObjects && resourceObjects.length) {
-      async.map(resourceObjects, (resourceObject, done) => {
-        model.getBodyAttribute(resourceObject.type, resourceObject.id, (error, body) => {
-          if (body) {
-            resourceObject.attributes.body = body;
-          }
-
-          done(error, resourceObject);
-        })
-      }, done);
+      async.map(resourceObjects, model.addAttributesToResourceObject, done);
     } else {
       done();
     }
   };
 
-  async.waterfall([getMany, getBody], done);
+  async.waterfall([getMany, addAttributesToResourceObjects], done);
+};
+
+/**
+ * Set an attribute for a resourceObject in the model
+ * @param {string} type – Resource object type
+ * @param {string} id - Resource object ID
+ * @param {string} name - Attribute name
+ * @param {*} value - Attribute value
+ */
+model.setResourceObjectAttribute = function(type, id, name, value) {
+  let attribute = {};
+  attribute[name] = value;
+  client.sadd(`${type}:${id}`, JSON.stringify(attribute));
+  debug('setResourceObjectAttribute', `${type}:${id}`, JSON.stringify(attribute));
 };
 
 model.setOne = function(type, id, object, done) {
@@ -150,21 +205,7 @@ model.getResourceObject = function(type, id, done) {
     model.getOne(type, id, done);
   };
 
-  var getBody = (resourceObject, done) => {
-    if (resourceObject) {
-      model.getBodyAttribute(type, id, (error, body) => {
-        if (body) {
-          resourceObject.attributes.body = body;
-        }
-
-        done(error, resourceObject);
-      });
-    } else {
-      done();
-    }
-  };
-
-  async.waterfall([getOne, getBody], done);
+  async.waterfall([getOne, model.addAttributesToResourceObject], done);
 };
 
 module.exports = model;

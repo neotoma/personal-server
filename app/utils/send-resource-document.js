@@ -6,9 +6,7 @@ var _ = require('lodash'),
 
 module.exports = function(req, res, data) {
   if (!data) {
-    return res.send({ 
-      data: []
-    });
+    return res.status(404).send('Not Found');
   }
 
   let included;
@@ -67,9 +65,7 @@ module.exports = function(req, res, data) {
     if (error) {
       res.status(500).send('Internal Server Error');
     } else if (!data) {
-      res.send({ 
-        data: []
-      });
+      res.status(404).send('Not Found');
     } else {
       res.send({ 
         data: data,

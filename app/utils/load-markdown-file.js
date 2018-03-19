@@ -13,6 +13,11 @@ module.exports = function(model, path, event) {
       id = pathProperties.name,
       type = pathProperties.dir.split('/').pop();
 
-    model.setOne('body-attributes', `${type}:${id}`, body);
+    if (id.includes('.')) {
+      let idParts = id.split('.');
+      id = idParts[0];
+      let attribute = idParts[1];
+      model.setResourceObjectAttribute(type, id, attribute, body);
+    }
   });
 };

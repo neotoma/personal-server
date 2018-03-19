@@ -1,8 +1,12 @@
-var debug = require('debug')('personalServer'),
+var debug = require('debug')('personalServer:loadResourceObjectsFile'),
   fs = require('graceful-fs'),
   Path = require('path');
 
 module.exports = function(model, path, event) {
+  if (path.includes('index.js')) {
+    model.deleteAll(Path.parse(path).dir.split('/').pop());
+  }
+
   fs.readFile(path, (error, data) => {
     if (error) {
       return debug(`encountered error trying to read file: ${error.message}`);
