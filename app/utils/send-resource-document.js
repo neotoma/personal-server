@@ -1,7 +1,6 @@
 var _ = require('lodash'),
   async = require('async'),
   convertResourceObjectUrls = require('app/utils/convert-resource-object-urls'),
-  debug = require('app/lib/debug'),
   getRelatedResourceObjects = require('app/utils/get-related-resource-objects');
 
 module.exports = function(req, res, data) {

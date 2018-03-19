@@ -79,7 +79,13 @@ model.getResourceObjectAttributes = function(type, id, done) {
     try {
       if (attributes.length) {
         try {
-          attributes = JSON.parse(attributes);
+          let mergedAttributes = {};
+
+          attributes.forEach((attribute) => {
+            Object.assign(mergedAttributes, JSON.parse(attribute));
+          });
+
+          attributes = mergedAttributes;
         } catch(error) {
           debug('unable to parse getResourceObjectAttributes from model store', attributes);
         }
