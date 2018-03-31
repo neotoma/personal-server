@@ -24,14 +24,14 @@ module.exports = function(resourceObject, req) {
     if (typeof url !== 'string') { return; }
 
     if (isRelativeUrl(url)) {
-      if (req.headers.host.indexOf('127.0.0.1') === 0 && process.env.PERSONAL_SERVER_IMGIX_DEPLOY_HOST) {
+      if (isImage(url) && req.headers.host.indexOf('127.0.0.1') === 0 && process.env.PERSONAL_SERVER_IMGIX_DEPLOY_HOST) {
         url = 'http://' + path.join(process.env.PERSONAL_SERVER_IMGIX_DEPLOY_HOST, url);
       } else {
         url = 'http://' + path.join(req.headers.host, url);
       }
     }
 
-    if (imgix) {
+    if (isImage(url) && imgix) {
       resourceObject.attributes[key] = imgix.buildURL(url);
 
       resourceObject.attributes[`thumb-${key}`] = imgix.buildURL(resourceObject.attributes[key], {
