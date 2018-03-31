@@ -21,7 +21,7 @@ module.exports = function(resourceObject, req) {
   Object.keys(resourceObject.attributes).forEach((key) => {
     var url = resourceObject.attributes[key];
 
-    if (typeof url !== 'string' || !isImage(url)) { return; }
+    if (typeof url !== 'string') { return; }
 
     if (isRelativeUrl(url)) {
       if (req.headers.host.indexOf('127.0.0.1') === 0 && process.env.PERSONAL_SERVER_IMGIX_DEPLOY_HOST) {
