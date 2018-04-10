@@ -1,12 +1,29 @@
-var debug = require('app/lib/debug'),
+var bodyParser = require('body-parser'),
+  debug = require('app/lib/debug'),
   compression = require('compression'),
   express = require('express'),
   getResourceObject = require('app/routes/get-resource-object'),
   getResourceObjects = require('app/routes/get-resource-objects'),
   model = require('app/lib/model'),
   path = require('path'),
+  postMessage = require('app/routes/post-message'),
   app = express();
 
+/**
+ * Establish body-parser middleware with JSON API error handling
+ */
+app.use((req, res, next) => {
+  var json = bodyParser.json({ type: ['application/vnd.api+json', 'application/json'] });
+
+  json(req, res, (error) => {
+    if (error) {
+      sendError(res, error, 400);
+    } else {
+      next();
+    }
+  });
+});
+  
 app.use(compression());
 
 model.init({
@@ -26,5 +43,6 @@ app.use('*', (req, res, next) => {
 
 app.get('/:type', getResourceObjects);
 app.get('/:type/:id', getResourceObject);
+app.post('/messages', postMessage);
 
 module.exports = app;
