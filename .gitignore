@@ -1,4 +1,5 @@
 *.log
+.cert
 .env*
 data
 node_modules

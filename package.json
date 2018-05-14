@@ -45,5 +45,5 @@
     "postinstall": "grunt symlink:modules",
     "start": "node index.js"
   },
-  "version": "0.1.2"
+  "version": "0.1.3"
 }

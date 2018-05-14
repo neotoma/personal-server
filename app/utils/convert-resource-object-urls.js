@@ -2,7 +2,8 @@ var _ = require('underscore'),
   imgix,
   ImgixClient = require('imgix-core-js'),
   isImage = require('is-image'),
-  path = require('path');
+  path = require('path'),
+  ranger = require('park-ranger')();
 
 if (process.env.PERSONAL_SERVER_IMGIX_HOST && process.env.PERSONAL_SERVER_IMGIX_SECURITY_TOKEN) {
   imgix = new ImgixClient({
@@ -10,6 +11,8 @@ if (process.env.PERSONAL_SERVER_IMGIX_HOST && process.env.PERSONAL_SERVER_IMGIX_
     secureURLToken: process.env.PERSONAL_SERVER_IMGIX_SECURITY_TOKEN
   });
 }
+
+let protocol = (ranger.cert) ? 'https' : 'http';
 
 module.exports = function(resourceObject, req) {
   if (!resourceObject || !req) { return; }
@@ -25,9 +28,9 @@ module.exports = function(resourceObject, req) {
 
     if (isRelativeUrl(url)) {
       if (isImage(url) && req.headers.host.indexOf('127.0.0.1') === 0 && process.env.PERSONAL_SERVER_IMGIX_DEPLOY_HOST) {
-        url = 'http://' + path.join(process.env.PERSONAL_SERVER_IMGIX_DEPLOY_HOST, url);
+        url = `${protocol}://${path.join(process.env.PERSONAL_SERVER_IMGIX_DEPLOY_HOST, url)}`;
       } else {
-        url = 'http://' + path.join(req.headers.host, url);
+        url = `${protocol}://${path.join(req.headers.host, url)}`;
       }
     }
 
