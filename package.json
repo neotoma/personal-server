@@ -9,7 +9,7 @@
     "chokidar": "^1.7.0",
     "compression": "^1.7.1",
     "debug": "^3.1.0",
-    "express": "^4.14.0",
+    "express": "^4.17.3",
     "graceful-fs": "^4.1.11",
     "grunt": "0.4.1",
     "grunt-cli": "^1.2.0",
